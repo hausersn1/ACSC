@@ -141,6 +141,12 @@
             height: 280px;
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
         }
 
         .card-content {
@@ -163,6 +169,17 @@
         .card-institution {
             font-size: 0.9rem;
             color: #777;
+        }
+
+        .mentor-badge {
+            display: inline-block;
+            background: #4ade80;
+            color: white;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
         }
 
         .profile-view {
@@ -189,6 +206,12 @@
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4rem;
+            font-weight: 700;
         }
 
         .profile-info {
@@ -212,6 +235,21 @@
             font-size: 1rem;
             color: #777;
             margin-bottom: 1rem;
+        }
+
+        .profile-email {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .profile-email:hover {
+            background: #5568d3;
         }
 
         .profile-details {
@@ -309,7 +347,7 @@
                     type="text" 
                     id="searchInput" 
                     class="search-bar" 
-                    placeholder="Search by name, institution, research interests..."
+                    placeholder="Search by name, institution, research areas, mentoring topics..."
                 >
                 
                 <div class="filters" id="filtersContainer"></div>
@@ -337,7 +375,45 @@
     <script>
         let allPeople = [];
         let filteredPeople = [];
-        const multiSelectFields = ['research_interests', 'specialties', 'areas_of_interest']; // Configure these based on your CSV
+        
+        // Configure multi-select fields (comma-separated values from checkboxes)
+        const multiSelectFields = [
+            'Current Professional Activities',
+            'Research Topic Area(s)',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?',
+            'What funding mechanisms do you have experience with? (e.g., NIH F32, NSF GRFP, HHF ERG'
+        ];
+
+        // Fields to display on card
+        const cardFields = {
+            name: 'Name (as it should be listed in the directory, i.e., First Last, credentials)',
+            photo: 'Profile Picture',
+            position: 'Current Position',
+            institution: 'Current Affiliation (e.g., university, company name)',
+            mentor: 'Do you agree to mentor individuals who reach out to you?'
+        };
+
+        // Fields to use for filtering
+        const filterableFields = [
+            'Research Category',
+            'Research Topic Area(s)',
+            'Do you agree to mentor individuals who reach out to you?',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?',
+            'Did you obtain your AuD and PhD from the same institution?',
+            'Did you complete your AuD and PhD simultaneously or sequentially?'
+        ];
+
+        // Fields to skip in detailed view
+        const skipInDetailView = [
+            'Timestamp',
+            'Name (as it should be listed in the directory, i.e., First Last, credentials)',
+            'Profile Picture',
+            'Current Position',
+            'Current Affiliation (e.g., university, company name)',
+            'Email (this will be what is used for connecting with you)'
+        ];
 
         async function loadData() {
             try {
@@ -351,13 +427,13 @@
                         allPeople = results.data.map(person => {
                             const processed = {...person};
                             
-                            // Process multi-select fields (handle comma-separated or semicolon-separated values)
+                            // Process multi-select fields
                             multiSelectFields.forEach(field => {
                                 if (processed[field]) {
                                     processed[field] = processed[field]
                                         .split(/[,;]/)
                                         .map(item => item.trim())
-                                        .filter(item => item);
+                                        .filter(item => item && item !== 'NA');
                                 }
                             });
                             
@@ -384,32 +460,36 @@
 
         function initializeFilters() {
             const filtersContainer = document.getElementById('filtersContainer');
-            const headers = Object.keys(allPeople[0] || {});
-            
-            const skipFields = ['name', 'email', 'position', 'institution', 'photo', 'image'];
-            const filterFields = headers.filter(h => 
-                !skipFields.some(skip => h.toLowerCase().includes(skip.toLowerCase()))
-            );
 
-            filterFields.forEach(field => {
+            filterableFields.forEach(field => {
                 let uniqueValues = new Set();
                 
                 allPeople.forEach(person => {
                     if (Array.isArray(person[field])) {
                         person[field].forEach(v => v && uniqueValues.add(v));
-                    } else if (person[field]) {
+                    } else if (person[field] && person[field] !== 'NA') {
                         uniqueValues.add(person[field]);
                     }
                 });
                 
-                uniqueValues = Array.from(uniqueValues);
+                uniqueValues = Array.from(uniqueValues).filter(v => v);
                 
-                if (uniqueValues.length > 1 && uniqueValues.length < 30) {
+                if (uniqueValues.length > 0) {
                     const filterGroup = document.createElement('div');
                     filterGroup.className = 'filter-group';
                     
                     const label = document.createElement('label');
-                    label.textContent = field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    // Create shorter label names
+                    const shortLabels = {
+                        'Research Category': 'Research Category',
+                        'Research Topic Area(s)': 'Research Topics',
+                        'Do you agree to mentor individuals who reach out to you?': 'Available to Mentor',
+                        'What professional topics would you be interested in providing mentoring on?': 'Mentoring Topics',
+                        'What level mentee do you typically work with?': 'Mentee Level',
+                        'Did you obtain your AuD and PhD from the same institution?': 'Same Institution',
+                        'Did you complete your AuD and PhD simultaneously or sequentially?': 'Degree Timing'
+                    };
+                    label.textContent = shortLabels[field] || field;
                     
                     const select = document.createElement('select');
                     select.id = `filter-${field}`;
@@ -436,6 +516,7 @@
             const filterSelects = document.querySelectorAll('.filter-group select');
             
             filteredPeople = allPeople.filter(person => {
+                // Search filter
                 const searchMatch = Object.entries(person).some(([key, value]) => {
                     if (Array.isArray(value)) {
                         return value.some(v => v.toLowerCase().includes(searchTerm));
@@ -445,6 +526,7 @@
                 
                 if (!searchMatch) return false;
                 
+                // Dropdown filters
                 for (let select of filterSelects) {
                     const field = select.id.replace('filter-', '');
                     const filterValue = select.value;
@@ -464,6 +546,10 @@
             renderDirectory();
         }
 
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
         function renderDirectory() {
             const grid = document.getElementById('directoryGrid');
             const resultsInfo = document.getElementById('resultsInfo');
@@ -476,19 +562,26 @@
             }
             
             grid.innerHTML = filteredPeople.map((person, index) => {
-                const photoUrl = person.photo || person.image || person.picture || '';
-                const name = person.name || person.Name || 'Unknown';
-                const position = person.position || person.current_position || person.title || '';
-                const institution = person.institution || person.university || person.affiliation || '';
+                const photoUrl = person[cardFields.photo] || '';
+                const name = person[cardFields.name] || 'Unknown';
+                const position = person[cardFields.position] || '';
+                const institution = person[cardFields.institution] || '';
+                const isMentor = person[cardFields.mentor] && person[cardFields.mentor].toLowerCase().includes('yes');
+                
+                const initials = getInitials(name);
+                
+                const imageHtml = photoUrl ? 
+                    `<img src="${photoUrl}" alt="${name}" class="card-image" onerror="this.outerHTML='<div class=\\'card-image\\'>${initials}</div>';">` :
+                    `<div class="card-image">${initials}</div>`;
                 
                 return `
                     <div class="person-card" onclick="showProfile(${allPeople.indexOf(person)})">
-                        <img src="${photoUrl}" alt="${name}" class="card-image" 
-                             onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.alt='No photo';">
+                        ${imageHtml}
                         <div class="card-content">
                             <div class="card-name">${name}</div>
                             <div class="card-position">${position}</div>
                             <div class="card-institution">${institution}</div>
+                            ${isMentor ? '<span class="mentor-badge">Available to Mentor</span>' : ''}
                         </div>
                     </div>
                 `;
@@ -497,45 +590,51 @@
 
         function showProfile(personIndex) {
             const person = allPeople[personIndex];
-            const photoUrl = person.photo || person.image || person.picture || '';
-            const name = person.name || person.Name || 'Unknown';
-            const position = person.position || person.current_position || person.title || '';
-            const institution = person.institution || person.university || person.affiliation || '';
+            const photoUrl = person[cardFields.photo] || '';
+            const name = person[cardFields.name] || 'Unknown';
+            const position = person[cardFields.position] || '';
+            const institution = person[cardFields.institution] || '';
+            const email = person['Email (this will be what is used for connecting with you)'] || '';
             
-            const skipFields = ['name', 'photo', 'image', 'picture', 'position', 'current_position', 'title', 'institution', 'university', 'affiliation'];
+            const initials = getInitials(name);
+            
+            const imageHtml = photoUrl ? 
+                `<img src="${photoUrl}" alt="${name}" class="profile-image" onerror="this.outerHTML='<div class=\\'profile-image\\'>${initials}</div>';">` :
+                `<div class="profile-image">${initials}</div>`;
             
             const detailSections = Object.entries(person)
-                .filter(([key]) => !skipFields.includes(key) && person[key])
+                .filter(([key]) => !skipInDetailView.includes(key) && person[key] && person[key] !== 'NA')
                 .map(([key, value]) => {
-                    const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                     let displayValue;
                     
-                    if (Array.isArray(value)) {
+                    if (Array.isArray(value) && value.length > 0) {
                         displayValue = `
                             <div class="tag-list">
                                 ${value.map(v => `<span class="tag">${v}</span>`).join('')}
                             </div>
                         `;
-                    } else {
+                    } else if (value) {
                         displayValue = `<div class="detail-value">${value}</div>`;
+                    } else {
+                        return '';
                     }
                     
                     return `
                         <div class="detail-section">
-                            <div class="detail-label">${label}</div>
+                            <div class="detail-label">${key}</div>
                             ${displayValue}
                         </div>
                     `;
-                }).join('');
+                }).filter(s => s).join('');
             
             document.getElementById('profileContent').innerHTML = `
                 <div class="profile-header">
-                    <img src="${photoUrl}" alt="${name}" class="profile-image"
-                         onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.alt='No photo';">
+                    ${imageHtml}
                     <div class="profile-info">
                         <div class="profile-name">${name}</div>
                         <div class="profile-position">${position}</div>
                         <div class="profile-institution">${institution}</div>
+                        ${email ? `<a href="mailto:${email}" class="profile-email">Contact via Email</a>` : ''}
                     </div>
                 </div>
                 <div class="profile-details">
