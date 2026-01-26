@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - AuD/PhD Connect</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">AuD/PhD Connect</a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <nav id="mainNav">
+                <a href="index.html">Home</a>
+                <a href="directory.html">Directory</a>
+                <a href="events.html" class="active">Events</a>
+                <a href="resources.html">Resources</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h2>Upcoming Events</h2>
+            <p>Join us for meetups, webinars, and networking opportunities</p>
+        </div>
+
+        <div class="events-grid">
+            <div class="event-card">
+                <h3>Monthly Virtual Meetup</h3>
+                <div class="event-meta">
+                    <span class="event-meta-item">📅 First Thursday of each month</span>
+                    <span class="event-meta-item">⏰ 7:00 PM EST</span>
+                </div>
+                <p class="event-description">Join fellow AuD/PhD professionals for informal networking and discussion. Share your research, ask questions, and build connections with colleagues across the country.</p>
+                <div class="event-links">
+                    <a href="#" class="event-link">Join Zoom Meeting</a>
+                    <a href="#" class="event-link">Add to Calendar</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <h3>Research Presentation Series</h3>
+                <div class="event-meta">
+                    <span class="event-meta-item">📅 Quarterly</span>
+                    <span class="event-meta-item">⏰ TBA</span>
+                </div>
+                <p class="event-description">Members present their current research projects and receive feedback from the community. A great opportunity to practice presentations and get constructive input from peers with diverse perspectives.</p>
+                <div class="event-links">
+                    <a href="#" class="event-link">View Schedule</a>
+                    <a href="#" class="event-link">Submit to Present</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <h3>Career Development Workshop</h3>
+                <div class="event-meta">
+                    <span class="event-meta-item">📅 March 15, 2026</span>
+                    <span class="event-meta-item">⏰ 2:00 PM EST</span>
+                </div>
+                <p class="event-description">Learn about career pathways for dual degree holders, including academic positions, industry opportunities, and clinical-research hybrids. Panel discussion with professionals in various career stages.</p>
+                <div class="event-links">
+                    <a href="#" class="event-link">Register Now</a>
+                    <a href="#" class="event-link">Contact Organizer</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AuD/PhD Connect. Built with ❤️ for the audiology community.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mainNav');
+            nav.classList.toggle('mobile-open');
+        }
+    </script>
+</body>
+</html>

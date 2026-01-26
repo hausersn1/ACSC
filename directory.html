@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directory - AuD/PhD Connect</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">AuD/PhD Connect</a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <nav id="mainNav">
+                <a href="index.html">Home</a>
+                <a href="directory.html" class="active">Directory</a>
+                <a href="events.html">Events</a>
+                <a href="resources.html">Resources</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="galleryView">
+            <div class="page-header">
+                <h2>Member Directory</h2>
+                <p>Search and connect with AuD/PhD professionals</p>
+            </div>
+
+            <div class="controls">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-bar" 
+                    placeholder="Search by name, institution, research areas, mentoring topics..."
+                >
+                
+                <div class="filters" id="filtersContainer"></div>
+            </div>
+
+            <div class="results-info" id="resultsInfo"></div>
+            
+            <div id="loading" class="loading">Loading directory...</div>
+            <div class="directory-grid" id="directoryGrid"></div>
+        </div>
+
+        <div id="profileView" class="profile-view">
+            <a href="#" class="back-button" onclick="showGallery(); return false;">← Back to Directory</a>
+            <div id="profileContent"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AuD/PhD Connect. Built with ❤️ for the audiology community.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script>
+        let allPeople = [];
+        let filteredPeople = [];
+        
+        const multiSelectFields = [
+            'Current Professional Activities',
+            'Research Topic Area(s)',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?',
+            'What funding mechanisms do you have experience with? (e.g., NIH F32, NSF GRFP, HHF ERG'
+        ];
+
+        const cardFields = {
+            name: 'Name (as it should be listed in the directory, i.e., First Last, credentials)',
+            photo: 'Profile Picture',
+            position: 'Current Position',
+            institution: 'Current Affiliation (e.g., university, company name)',
+            mentor: 'Do you agree to mentor individuals who reach out to you?'
+        };
+
+        const filterableFields = [
+            'Research Category',
+            'Research Topic Area(s)',
+            'Do you agree to mentor individuals who reach out to you?',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?',
+            'Did you obtain your AuD and PhD from the same institution?',
+            'Did you complete your AuD and PhD simultaneously or sequentially?'
+        ];
+
+        const skipInDetailView = [
+            'Timestamp',
+            'Name (as it should be listed in the directory, i.e., First Last, credentials)',
+            'Profile Picture',
+            'Current Position',
+            'Current Affiliation (e.g., university, company name)',
+            'Email (this will be what is used for connecting with you)'
+        ];
+
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mainNav');
+            nav.classList.toggle('mobile-open');
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.csv');
+                const csvText = await response.text();
+                
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        allPeople = results.data.map(person => {
+                            const processed = {...person};
+                            
+                            multiSelectFields.forEach(field => {
+                                if (processed[field]) {
+                                    processed[field] = processed[field]
+                                        .split(/[,;]/)
+                                        .map(item => item.trim())
+                                        .filter(item => item && item !== 'NA');
+                                }
+                            });
+                            
+                            return processed;
+                        });
+                        
+                        filteredPeople = allPeople;
+                        initializeFilters();
+                        renderDirectory();
+                        document.getElementById('loading').style.display = 'none';
+                    },
+                    error: function(error) {
+                        console.error('Error parsing CSV:', error);
+                        document.getElementById('loading').innerHTML = 
+                            'Error loading data. Please make sure data.csv is in the same directory.';
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+                document.getElementById('loading').innerHTML = 
+                    'Error loading data. Please make sure data.csv is in the same directory.';
+            }
+        }
+
+        function initializeFilters() {
+            const filtersContainer = document.getElementById('filtersContainer');
+
+            filterableFields.forEach(field => {
+                let uniqueValues = new Set();
+                
+                allPeople.forEach(person => {
+                    if (Array.isArray(person[field])) {
+                        person[field].forEach(v => v && uniqueValues.add(v));
+                    } else if (person[field] && person[field] !== 'NA') {
+                        uniqueValues.add(person[field]);
+                    }
+                });
+                
+                uniqueValues = Array.from(uniqueValues).filter(v => v);
+                
+                if (uniqueValues.length > 0) {
+                    const filterGroup = document.createElement('div');
+                    filterGroup.className = 'filter-group';
+                    
+                    const label = document.createElement('label');
+                    const shortLabels = {
+                        'Research Category': 'Research Category',
+                        'Research Topic Area(s)': 'Research Topics',
+                        'Do you agree to mentor individuals who reach out to you?': 'Available to Mentor',
+                        'What professional topics would you be interested in providing mentoring on?': 'Mentoring Topics',
+                        'What level mentee do you typically work with?': 'Mentee Level',
+                        'Did you obtain your AuD and PhD from the same institution?': 'Same Institution',
+                        'Did you complete your AuD and PhD simultaneously or sequentially?': 'Degree Timing'
+                    };
+                    label.textContent = shortLabels[field] || field;
+                    
+                    const select = document.createElement('select');
+                    select.id = `filter-${field}`;
+                    select.innerHTML = `<option value="">All</option>`;
+                    
+                    uniqueValues.sort().forEach(value => {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = value;
+                        select.appendChild(option);
+                    });
+                    
+                    select.addEventListener('change', applyFilters);
+                    
+                    filterGroup.appendChild(label);
+                    filterGroup.appendChild(select);
+                    filtersContainer.appendChild(filterGroup);
+                }
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterSelects = document.querySelectorAll('.filter-group select');
+            
+            filteredPeople = allPeople.filter(person => {
+                const searchMatch = Object.entries(person).some(([key, value]) => {
+                    if (Array.isArray(value)) {
+                        return value.some(v => v.toLowerCase().includes(searchTerm));
+                    }
+                    return value && value.toString().toLowerCase().includes(searchTerm);
+                });
+                
+                if (!searchMatch) return false;
+                
+                for (let select of filterSelects) {
+                    const field = select.id.replace('filter-', '');
+                    const filterValue = select.value;
+                    
+                    if (filterValue) {
+                        if (Array.isArray(person[field])) {
+                            if (!person[field].includes(filterValue)) return false;
+                        } else if (person[field] !== filterValue) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            });
+            
+            renderDirectory();
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        function renderDirectory() {
+            const grid = document.getElementById('directoryGrid');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            resultsInfo.textContent = `Showing ${filteredPeople.length} of ${allPeople.length} people`;
+            
+            if (filteredPeople.length === 0) {
+                grid.innerHTML = '<div class="no-results">No results found. Try adjusting your search or filters.</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredPeople.map((person, index) => {
+                const photoUrl = person[cardFields.photo] || '';
+                const name = person[cardFields.name] || 'Unknown';
+                const position = person[cardFields.position] || '';
+                const institution = person[cardFields.institution] || '';
+                const isMentor = person[cardFields.mentor] && person[cardFields.mentor].toLowerCase().includes('yes');
+                
+                const initials = getInitials(name);
+                
+                const imageHtml = photoUrl ? 
+                    `<img src="${photoUrl}" alt="${name}" class="card-image" onerror="this.outerHTML='<div class=\\'card-image\\'>${initials}</div>';">` :
+                    `<div class="card-image">${initials}</div>`;
+                
+                return `
+                    <div class="person-card" onclick="showProfile(${allPeople.indexOf(person)})">
+                        ${imageHtml}
+                        <div class="card-content">
+                            <div class="card-name">${name}</div>
+                            <div class="card-position">${position}</div>
+                            <div class="card-institution">${institution}</div>
+                            ${isMentor ? '<span class="mentor-badge">Available to Mentor</span>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showProfile(personIndex) {
+            const person = allPeople[personIndex];
+            const photoUrl = person[cardFields.photo] || '';
+            const name = person[cardFields.name] || 'Unknown';
+            const position = person[cardFields.position] || '';
+            const institution = person[cardFields.institution] || '';
+            const email = person['Email (this will be what is used for connecting with you)'] || '';
+            
+            const initials = getInitials(name);
+            
+            const imageHtml = photoUrl ? 
+                `<img src="${photoUrl}" alt="${name}" class="profile-image" onerror="this.outerHTML='<div class=\\'profile-image\\'>${initials}</div>';">` :
+                `<div class="profile-image">${initials}</div>`;
+            
+            const detailSections = Object.entries(person)
+                .filter(([key]) => !skipInDetailView.includes(key) && person[key] && person[key] !== 'NA')
+                .map(([key, value]) => {
+                    let displayValue;
+                    
+                    if (Array.isArray(value) && value.length > 0) {
+                        displayValue = `
+                            <div class="tag-list">
+                                ${value.map(v => `<span class="tag">${v}</span>`).join('')}
+                            </div>
+                        `;
+                    } else if (value) {
+                        displayValue = `<div class="detail-value">${value}</div>`;
+                    } else {
+                        return '';
+                    }
+                    
+                    return `
+                        <div class="detail-section">
+                            <div class="detail-label">${key}</div>
+                            ${displayValue}
+                        </div>
+                    `;
+                }).filter(s => s).join('');
+            
+            document.getElementById('profileContent').innerHTML = `
+                <div class="profile-header">
+                    ${imageHtml}
+                    <div class="profile-info">
+                        <div class="profile-name">${name}</div>
+                        <div class="profile-position">${position}</div>
+                        <div class="profile-institution">${institution}</div>
+                        ${email ? `<a href="mailto:${email}" class="profile-email">Contact via Email</a>` : ''}
+                    </div>
+                </div>
+                <div class="profile-details">
+                    ${detailSections}
+                </div>
+            `;
+            
+            document.getElementById('galleryView').style.display = 'none';
+            document.getElementById('profileView').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function showGallery() {
+            document.getElementById('galleryView').style.display = 'block';
+            document.getElementById('profileView').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        loadData();
+    </script>
+</body>
+</html>
