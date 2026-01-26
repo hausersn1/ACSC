@@ -16,11 +16,12 @@
                 <a href="directory.html" class="active">Directory</a>
                 <a href="events.html">Events</a>
                 <a href="resources.html">Resources</a>
+                <a href="about.html">About</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+     <main class="container">
         <div id="galleryView">
             <div class="page-header">
                 <h2>Member Directory</h2>
@@ -56,7 +57,7 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script>
         let allPeople = [];
         let filteredPeople = [];
@@ -143,6 +144,13 @@
             }
         }
 
+        // Fields that should use checkboxes (allow multiple selections)
+        const checkboxFilterFields = [
+            'Research Topic Area(s)',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?'
+        ];
+
         function initializeFilters() {
             const filtersContainer = document.getElementById('filtersContainer');
 
@@ -175,21 +183,46 @@
                     };
                     label.textContent = shortLabels[field] || field;
                     
-                    const select = document.createElement('select');
-                    select.id = `filter-${field}`;
-                    select.innerHTML = `<option value="">All</option>`;
-                    
-                    uniqueValues.sort().forEach(value => {
-                        const option = document.createElement('option');
-                        option.value = value;
-                        option.textContent = value;
-                        select.appendChild(option);
-                    });
-                    
-                    select.addEventListener('change', applyFilters);
-                    
                     filterGroup.appendChild(label);
-                    filterGroup.appendChild(select);
+                    
+                    // Use checkboxes for multi-select fields
+                    if (checkboxFilterFields.includes(field)) {
+                        const checkboxContainer = document.createElement('div');
+                        checkboxContainer.className = 'checkbox-container';
+                        checkboxContainer.id = `filter-${field}`;
+                        
+                        uniqueValues.sort().forEach(value => {
+                            const checkboxWrapper = document.createElement('label');
+                            checkboxWrapper.className = 'checkbox-label';
+                            
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = value;
+                            checkbox.addEventListener('change', applyFilters);
+                            
+                            checkboxWrapper.appendChild(checkbox);
+                            checkboxWrapper.appendChild(document.createTextNode(' ' + value));
+                            checkboxContainer.appendChild(checkboxWrapper);
+                        });
+                        
+                        filterGroup.appendChild(checkboxContainer);
+                    } else {
+                        // Use dropdown for single-select fields
+                        const select = document.createElement('select');
+                        select.id = `filter-${field}`;
+                        select.innerHTML = `<option value="">All</option>`;
+                        
+                        uniqueValues.sort().forEach(value => {
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = value;
+                            select.appendChild(option);
+                        });
+                        
+                        select.addEventListener('change', applyFilters);
+                        filterGroup.appendChild(select);
+                    }
+                    
                     filtersContainer.appendChild(filterGroup);
                 }
             });
@@ -197,7 +230,6 @@
 
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filterSelects = document.querySelectorAll('.filter-group select');
             
             filteredPeople = allPeople.filter(person => {
                 const searchMatch = Object.entries(person).some(([key, value]) => {
@@ -209,15 +241,32 @@
                 
                 if (!searchMatch) return false;
                 
-                for (let select of filterSelects) {
-                    const field = select.id.replace('filter-', '');
-                    const filterValue = select.value;
+                // Check all filters
+                for (let field of filterableFields) {
+                    const filterElement = document.getElementById(`filter-${field}`);
                     
-                    if (filterValue) {
-                        if (Array.isArray(person[field])) {
-                            if (!person[field].includes(filterValue)) return false;
-                        } else if (person[field] !== filterValue) {
-                            return false;
+                    if (!filterElement) continue;
+                    
+                    // Handle checkbox filters
+                    if (checkboxFilterFields.includes(field)) {
+                        const checkboxes = filterElement.querySelectorAll('input[type="checkbox"]:checked');
+                        if (checkboxes.length > 0) {
+                            const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+                            const personValues = Array.isArray(person[field]) ? person[field] : [person[field]];
+                            
+                            // Person must have at least one of the selected values
+                            const hasMatch = selectedValues.some(val => personValues.includes(val));
+                            if (!hasMatch) return false;
+                        }
+                    } else {
+                        // Handle dropdown filters
+                        const filterValue = filterElement.value;
+                        if (filterValue) {
+                            if (Array.isArray(person[field])) {
+                                if (!person[field].includes(filterValue)) return false;
+                            } else if (person[field] !== filterValue) {
+                                return false;
+                            }
                         }
                     }
                 }
