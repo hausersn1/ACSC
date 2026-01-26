@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - AuD/PhD Connect</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="logo">Audiology Clinician-Scientist Collective</a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <nav id="mainNav">
+                <a href="index.html">Home</a>
+                <a href="directory.html">Directory</a>
+                <a href="events.html">Events</a>
+                <a href="resources.html">Resources</a>
+                <a href="about.html" class="active">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h2>Learn More</h2>
+            <p>Read about our mission, vision, and the people behind the Audiology Clinician-Scientist Collective</p>
+        </div>
+
+        <div class="resources-content">
+            <div class="resource-section">
+                <h3>Our Vision</h3>
+                <p>The primary goal of this network is to facilitate connections among audiology clinician-scientists and clinician-scientists-in-training. This group was inspired by our personal experiences navigating clinical and research training where we found it difficult at times to find and connect with others on a similar career path. We are also encouraged by other communities of scientists offering support to each other during these uncertain times. We are excited to say our Collective has already grown to 94 members, including Au.D. students, junior/senior faculty, hearing scientists, and clinicians!</p>
+                
+                <h4>Members</h4>
+                <p>Anyone at any stage of their AuD/PhD journey can join our collective. We also encourage those who frequently work with or mentor AuD students or regularly partner with audiologists for their research to join. The following individuals would be well suited to join our collective. </p>
+                <ul>
+                    <li>An AuD student considering pursuing a PhD</li>
+                    <li>A research audiologist</li>
+                    <li>University faculty member who runs a lab</li>
+                    <li>Communication Sciences and Disorders Chair/Head</li>
+                    <li>A PI in neuroscience who regularly mentors AuD students</li>
+                </ul>
+
+            <div class="resource-section">
+                <h3>Why Join Our Collective?</h3>
+                <p>There is a critical need for more clinician-scientists in audiology. The models for training are highly variable and can lack support for those navigating both clinical and research paths. By joining our collective, members can:</p>                
+                <ul>
+                    <li>Connect with others on a similar career path</li>
+                    <li>Evaluate different models and resources for their training</li>
+                    <li>Receive mentorship from experienced clinician-scientists</li>
+                    <li>Participate in networking events and professional development opportunities</li>
+                    <li>Collaborate on research projects and clinical initiatives</li>
+                    <li>Contribute to a growing community dedicated to advancing audiology through research and clinical excellence</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Audiology Clinician-Scientist Collective. Built with ❤️ for the audiology and hearing science community.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mainNav');
+            nav.classList.toggle('mobile-open');
+        }
+    </script>
+</body>
+</html>
