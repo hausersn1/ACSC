@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ACSC Directory</title>
+    <title>Directory - ACSC</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -52,7 +52,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 AuD/PhD Connect. Built with ❤️ for the audiology community.</p>
+            <p>&copy; 2026 ACSC. Built with ❤️ for the audiology community.</p>
         </div>
     </footer>
 
@@ -115,9 +115,47 @@
             'We are considering using this information for future studies about clinician-scientists. Do you agree to be contacted to participate if applicable in the future?'
         ];
 
+        // Fields that should use checkboxes (allow multiple selections)
+        const checkboxFilterFields = [
+            'Research Topic Area(s)',
+            'Research Category (check all that apply)',
+            'What professional topics would you be interested in providing mentoring on?',
+            'What level mentee do you typically work with?',
+            'Current Professional Activities (check all that apply)'
+        ];
+
         function toggleMobileMenu() {
             const nav = document.getElementById('mainNav');
             nav.classList.toggle('mobile-open');
+        }
+
+        function convertGoogleDriveUrl(url) {
+            if (!url || url === 'NA' || url.trim() === '') return '';
+            
+            // Already in correct format
+            if (url.includes('drive.google.com/uc?id=')) {
+                return url;
+            }
+            
+            // Extract file ID from various Google Drive URL formats
+            let fileId = null;
+            
+            // Format: https://drive.google.com/file/d/FILE_ID/view
+            if (url.includes('/file/d/')) {
+                fileId = url.match(/\/file\/d\/([^\/]+)/)?.[1];
+            }
+            // Format: https://drive.google.com/open?id=FILE_ID
+            else if (url.includes('open?id=')) {
+                fileId = url.match(/open\?id=([^&]+)/)?.[1];
+            }
+            
+            // Convert to direct link format
+            if (fileId) {
+                return `https://drive.google.com/uc?id=${fileId}`;
+            }
+            
+            // If no conversion possible, return original
+            return url;
         }
 
         async function loadData() {
@@ -152,24 +190,15 @@
                     error: function(error) {
                         console.error('Error parsing CSV:', error);
                         document.getElementById('loading').innerHTML = 
-                            'Error loading data. Please make sure data.csv is in the same directory.';
+                            'Error loading data. Please make sure directory_data.csv is in the same directory.';
                     }
                 });
             } catch (error) {
                 console.error('Error loading CSV:', error);
                 document.getElementById('loading').innerHTML = 
-                    'Error loading data. Please make sure data.csv is in the same directory.';
+                    'Error loading data. Please make sure directory_data.csv is in the same directory.';
             }
         }
-
-        // Fields that should use checkboxes (allow multiple selections)
-        const checkboxFilterFields = [
-            'Research Topic Area(s)',
-            'Research Category (check all that apply)',
-            'What professional topics would you be interested in providing mentoring on?',
-            'What level mentee do you typically work with?',
-            'Current Professional Activities (check all that apply)'
-        ];
 
         function initializeFilters() {
             const filtersContainer = document.getElementById('filtersContainer');
@@ -313,7 +342,8 @@
             }
             
             grid.innerHTML = filteredPeople.map((person, index) => {
-                const photoUrl = person[cardFields.photo] || '';
+                const photoUrlRaw = person[cardFields.photo] || '';
+                const photoUrl = convertGoogleDriveUrl(photoUrlRaw);
                 const name = person[cardFields.name] || 'Unknown';
                 const position = person[cardFields.position] || '';
                 const institution = person[cardFields.institution] || '';
@@ -371,7 +401,8 @@
 
         function showProfile(personIndex) {
             const person = allPeople[personIndex];
-            const photoUrl = person[cardFields.photo] || '';
+            const photoUrlRaw = person[cardFields.photo] || '';
+            const photoUrl = convertGoogleDriveUrl(photoUrlRaw);
             const name = person[cardFields.name] || 'Unknown';
             const position = person[cardFields.position] || '';
             const institution = person[cardFields.institution] || '';
