@@ -101,17 +101,18 @@
         const skipInDetailView = [
             'Timestamp',
             'Preferred Name, as it should be listed in the directory (e.g., Mary Smith, Au.D., Ph.D.)',
-            'Profile Picture',
+            'Profile Picture ',
             'Current Job Title (e.g, Assistant Professor; Research Audiologist)',
             'Current Affiliation (e.g., University of Colorado)',
             'Current Department (if applicable, e.g., Department of Communication Sciences and Disorders)',
             'Email address (best for contact)',
             'Year/Institution/Field for Masters (e.g., 2020/University of Pittsburgh/Clinical Audiology; if not applicable, enter: NA)',
-            'Year/Institution for AuD (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
+            'Year/Institution for AuD  (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
             'Year/Institution/Field for PhD (e.g., 2020/University of Pittsburgh/Neuroscience; if not applicable, enter: NA)',
-            'Year/Institution for Postdoc (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
+            'Year/Institution for Postdoc  (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
             'Did you complete your AuD and PhD simultaneously or sequentially?',
             'Do you agree to mentor individuals who reach out to you?',
+            'FileName',
             'We are considering using this information for future studies about clinician-scientists. Do you agree to be contacted to participate if applicable in the future?'
         ];
 
@@ -129,34 +130,7 @@
             nav.classList.toggle('mobile-open');
         }
 
-        function convertGoogleDriveUrl(url) {
-            if (!url || url === 'NA' || url.trim() === '') return '';
-            
-            // Already in correct format
-            if (url.includes('drive.google.com/uc?id=')) {
-                return url;
-            }
-            
-            // Extract file ID from various Google Drive URL formats
-            let fileId = null;
-            
-            // Format: https://drive.google.com/file/d/FILE_ID/view
-            if (url.includes('/file/d/')) {
-                fileId = url.match(/\/file\/d\/([^\/]+)/)?.[1];
-            }
-            // Format: https://drive.google.com/open?id=FILE_ID
-            else if (url.includes('open?id=')) {
-                fileId = url.match(/open\?id=([^&]+)/)?.[1];
-            }
-            
-            // Convert to direct link format
-            if (fileId) {
-                return `https://drive.google.com/uc?id=${fileId}`;
-            }
-            
-            // If no conversion possible, return original
-            return url;
-        }
+        // Images are loaded from the local `pictures/` folder using the CSV `FileName` column.
 
         async function loadData() {
             try {
@@ -342,8 +316,8 @@
             }
             
             grid.innerHTML = filteredPeople.map((person, index) => {
-                const photoUrlRaw = person[cardFields.photo] || '';
-                const photoUrl = convertGoogleDriveUrl(photoUrlRaw);
+                const fileName = person['FileName'] && person['FileName'] !== 'NA' ? person['FileName'].trim() : '';
+                const photoUrl = fileName ? `pictures/${encodeURIComponent(fileName)}` : '';
                 const name = person[cardFields.name] || 'Unknown';
                 const position = person[cardFields.position] || '';
                 const institution = person[cardFields.institution] || '';
@@ -401,8 +375,8 @@
 
         function showProfile(personIndex) {
             const person = allPeople[personIndex];
-            const photoUrlRaw = person[cardFields.photo] || '';
-            const photoUrl = convertGoogleDriveUrl(photoUrlRaw);
+            const fileName = person['FileName'] && person['FileName'] !== 'NA' ? person['FileName'].trim() : '';
+            const photoUrl = fileName ? `pictures/${encodeURIComponent(fileName)}` : '';
             const name = person[cardFields.name] || 'Unknown';
             const position = person[cardFields.position] || '';
             const institution = person[cardFields.institution] || '';
@@ -418,11 +392,17 @@
             // Build institution display with optional department
             const institutionDisplay = department ? `${institution}<br><small style="color: var(--sage-green);">${department}</small>` : institution;
             
-            // Parse degree information
+            // Parse degree information - handle both single and double space versions
             const mastersInfo = parseDegreeInfo(person['Year/Institution/Field for Masters (e.g., 2020/University of Pittsburgh/Clinical Audiology; if not applicable, enter: NA)']);
-            const audInfo = parseDegreeInfo(person['Year/Institution for AuD (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']);
+            const audInfo = parseDegreeInfo(
+                person['Year/Institution for AuD  (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)'] ||
+                person['Year/Institution for AuD (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']
+            );
             const phdInfo = parseDegreeInfo(person['Year/Institution/Field for PhD (e.g., 2020/University of Pittsburgh/Neuroscience; if not applicable, enter: NA)']);
-            const postdocInfo = parseDegreeInfo(person['Year/Institution for Postdoc (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']);
+            const postdocInfo = parseDegreeInfo(
+                person['Year/Institution for Postdoc  (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)'] ||
+                person['Year/Institution for Postdoc (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']
+            );
             
             // Get simultaneous/sequential info
             const degreeTimingRaw = person['Did you complete your AuD and PhD simultaneously or sequentially?'] || '';
@@ -447,7 +427,7 @@
                     const footnoteText = degreeTiming === 'simultaneous' ? 
                         '* AuD and PhD completed simultaneously' : 
                         '+ AuD and PhD completed sequentially';
-                    educationSection += `<div style="font-size: 0.9rem; color: var(--driftwood); margin-top: 0.5rem; font-style: italic;">${footnoteText}</div>`;
+                    educationSection += `<div style="font-size: 0.9rem; color: var(--chocolate-brown); margin-top: 0.5rem; font-style: italic;">${footnoteText}</div>`;
                 }
                 
                 educationSection += '</div>';
