@@ -9,7 +9,7 @@
 <body>
     <header>
         <div class="header-content">
-            <a href="index.html" class="logo">AuD/PhD Connect</a>
+            <a href="index.html" class="logo">ACSC</a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
             <nav id="mainNav">
                 <a href="index.html">Home</a>
@@ -104,7 +104,14 @@
             'Profile Picture',
             'Current Job Title (e.g, Assistant Professor; Research Audiologist)',
             'Current Affiliation (e.g., University of Colorado)',
+            'Current Department (if applicable, e.g., Department of Communication Sciences and Disorders)',
             'Email address (best for contact)',
+            'Year/Institution/Field for Masters (e.g., 2020/University of Pittsburgh/Clinical Audiology; if not applicable, enter: NA)',
+            'Year/Institution for AuD (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
+            'Year/Institution/Field for PhD (e.g., 2020/University of Pittsburgh/Neuroscience; if not applicable, enter: NA)',
+            'Year/Institution for Postdoc (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)',
+            'Did you complete your AuD and PhD simultaneously or sequentially?',
+            'Do you agree to mentor individuals who reach out to you?',
             'We are considering using this information for future studies about clinician-scientists. Do you agree to be contacted to participate if applicable in the future?'
         ];
 
@@ -332,6 +339,36 @@
             }).join('');
         }
 
+        function parseDegreeInfo(degreeString) {
+            if (!degreeString || degreeString === 'NA' || degreeString.trim() === '') return null;
+            
+            // Format: Year/Institution/Field or Year/Institution
+            const parts = degreeString.split('/').map(p => p.trim());
+            if (parts.length >= 2) {
+                return {
+                    year: parts[0],
+                    institution: parts[1],
+                    field: parts[2] || null
+                };
+            }
+            return null;
+        }
+
+        function formatDegreeEntry(degreeName, info, showSuperscript = false, superscriptSymbol = '') {
+            if (!info) return '';
+            
+            let degreeText = degreeName;
+            if (showSuperscript && superscriptSymbol) {
+                degreeText += `<sup>${superscriptSymbol}</sup>`;
+            }
+            
+            if (info.field) {
+                return `<li><strong>${degreeText}</strong>, ${info.field}, ${info.institution}, ${info.year}</li>`;
+            } else {
+                return `<li><strong>${degreeText}</strong>, ${info.institution}, ${info.year}</li>`;
+            }
+        }
+
         function showProfile(personIndex) {
             const person = allPeople[personIndex];
             const photoUrl = person[cardFields.photo] || '';
@@ -350,16 +387,94 @@
             // Build institution display with optional department
             const institutionDisplay = department ? `${institution}<br><small style="color: var(--sage-green);">${department}</small>` : institution;
             
+            // Parse degree information
+            const mastersInfo = parseDegreeInfo(person['Year/Institution/Field for Masters (e.g., 2020/University of Pittsburgh/Clinical Audiology; if not applicable, enter: NA)']);
+            const audInfo = parseDegreeInfo(person['Year/Institution for AuD (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']);
+            const phdInfo = parseDegreeInfo(person['Year/Institution/Field for PhD (e.g., 2020/University of Pittsburgh/Neuroscience; if not applicable, enter: NA)']);
+            const postdocInfo = parseDegreeInfo(person['Year/Institution for Postdoc (e.g., 2020/University of Pittsburgh; if not applicable, enter: NA)']);
+            
+            // Get simultaneous/sequential info
+            const degreeTimingRaw = person['Did you complete your AuD and PhD simultaneously or sequentially?'] || '';
+            const degreeTiming = degreeTimingRaw.toLowerCase().includes('simultaneous') ? 'simultaneous' : 
+                                 degreeTimingRaw.toLowerCase().includes('sequential') ? 'sequential' : '';
+            const superscriptSymbol = degreeTiming === 'simultaneous' ? '*' : degreeTiming === 'sequential' ? '+' : '';
+            
+            // Build education section
+            let educationSection = '';
+            if (mastersInfo || audInfo || phdInfo || postdocInfo) {
+                educationSection = '<div class="detail-section"><div class="detail-label">Education</div><ul style="margin-left: 1.5rem; color: var(--chocolate-brown); line-height: 1.8;">';
+                
+                if (mastersInfo) educationSection += formatDegreeEntry('Masters', mastersInfo);
+                if (audInfo) educationSection += formatDegreeEntry('AuD', audInfo, !!degreeTiming, superscriptSymbol);
+                if (phdInfo) educationSection += formatDegreeEntry('PhD', phdInfo);
+                if (postdocInfo) educationSection += formatDegreeEntry('Postdoc', postdocInfo);
+                
+                educationSection += '</ul>';
+                
+                // Add footnote if there's a timing indicator
+                if (degreeTiming) {
+                    const footnoteText = degreeTiming === 'simultaneous' ? 
+                        '* AuD and PhD completed simultaneously' : 
+                        '+ AuD and PhD completed sequentially';
+                    educationSection += `<div style="font-size: 0.9rem; color: var(--driftwood); margin-top: 0.5rem; font-style: italic;">${footnoteText}</div>`;
+                }
+                
+                educationSection += '</div>';
+            }
+            
+            // Collect social/web links
+            const links = [];
+            if (person['Personal LinkedIn'] && person['Personal LinkedIn'] !== 'NA') {
+                links.push({ url: person['Personal LinkedIn'], label: 'LinkedIn', icon: 'linkedin' });
+            }
+            if (person['Lab/Personal Website'] && person['Lab/Personal Website'] !== 'NA') {
+                links.push({ url: person['Lab/Personal Website'], label: 'Website', icon: 'website' });
+            }
+            if (person['Lab/Personal other social media (e.g., BlueSky, Twitter)'] && person['Lab/Personal other social media (e.g., BlueSky, Twitter)'] !== 'NA') {
+                links.push({ url: person['Lab/Personal other social media (e.g., BlueSky, Twitter)'], label: 'Social Media', icon: 'social' });
+            }
+            if (person['Lab/Personal GitHub'] && person['Lab/Personal GitHub'] !== 'NA') {
+                links.push({ url: person['Lab/Personal GitHub'], label: 'GitHub', icon: 'github' });
+            }
+            if (person['Lab Instagram'] && person['Lab Instagram'] !== 'NA') {
+                links.push({ url: person['Lab Instagram'], label: 'Instagram', icon: 'instagram' });
+            }
+            if (person['Other relevant link(s)'] && person['Other relevant link(s)'] !== 'NA') {
+                links.push({ url: person['Other relevant link(s)'], label: 'Other Links', icon: 'link' });
+            }
+            
+            // Build link buttons section
+            let linksSection = '';
+            if (links.length > 0) {
+                linksSection = '<div class="profile-links">';
+                links.forEach(link => {
+                    const iconMap = {
+                        'linkedin': '💼',
+                        'website': '🌐',
+                        'social': '📱',
+                        'github': '💻',
+                        'instagram': '📷',
+                        'link': '🔗'
+                    };
+                    const icon = iconMap[link.icon] || '🔗';
+                    linksSection += `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="profile-link-btn">${icon} ${link.label}</a>`;
+                });
+                linksSection += '</div>';
+            }
+            
+            // Build other detail sections
             const detailSections = Object.entries(person)
-                .filter(([key]) => !skipInDetailView.includes(key) && person[key] && person[key] !== 'NA' && person[key] !== '')
+                .filter(([key]) => !skipInDetailView.includes(key) && !linkFields[key] && person[key] && person[key] !== 'NA' && person[key] !== '')
                 .map(([key, value]) => {
                     let displayValue;
+                    let displayLabel = key;
                     
-                    // Handle link fields specially
-                    if (linkFields[key]) {
-                        if (!value || value === 'NA') return '';
-                        displayValue = `<div class="detail-value"><a href="${value}" target="_blank" rel="noopener noreferrer" style="color: var(--burnt-orange); text-decoration: underline;">${linkFields[key]}</a></div>`;
-                    } else if (Array.isArray(value) && value.length > 0) {
+                    // Rename "Provide any other relevant information"
+                    if (key === 'Provide any other relevant information here. (e.g., did you work between degrees? have a non-traditional path to audiology?)') {
+                        displayLabel = 'Other Details about Me';
+                    }
+                    
+                    if (Array.isArray(value) && value.length > 0) {
                         displayValue = `
                             <div class="tag-list">
                                 ${value.map(v => `<span class="tag">${v}</span>`).join('')}
@@ -373,7 +488,7 @@
                     
                     return `
                         <div class="detail-section">
-                            <div class="detail-label">${key}</div>
+                            <div class="detail-label">${displayLabel}</div>
                             ${displayValue}
                         </div>
                     `;
@@ -390,7 +505,9 @@
                     </div>
                 </div>
                 <div class="profile-details">
+                    ${educationSection}
                     ${detailSections}
+                    ${linksSection}
                 </div>
             `;
             

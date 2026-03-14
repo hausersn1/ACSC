@@ -87,13 +87,6 @@ nav a:hover, nav a.active {
     min-height: calc(100vh - 200px);
 }
 
-/* Page Footer */
-.page-footer {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
 /* Page Header */
 .page-header {
     text-align: center;
@@ -474,6 +467,37 @@ footer {
 
 .profile-details {
     padding: 2rem;
+}
+
+.profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--sage-green);
+}
+
+.profile-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: white;
+    color: var(--chocolate-brown);
+    border: 2px solid var(--sage-green);
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.profile-link-btn:hover {
+    background: var(--sage-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .detail-section {
