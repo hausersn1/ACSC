@@ -12,8 +12,8 @@
     --primary-light: #a597a6;     /* Badges, tags, soft accents (was sage-green) */
     
     /* Secondary Colors - Accent and emphasis */
-    --secondary: #cfb6af;         /* Headings, strong emphasis (was terracotta) */
-    --secondary-light: #f4ede7;   /* CTA buttons, hover states (was burnt-orange) */
+    --secondary: #462f41;         /* Headings, strong emphasis (was terracotta) */
+    --secondary-light: #694f6a;   /* CTA buttons, hover states (was burnt-orange) */
     
     /* Text Colors */
     --text-primary: #252547;      /* Main body text (was chocolate-brown) */
