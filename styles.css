@@ -7,23 +7,27 @@
 
 :root {
     /* Primary Colors - Main brand colors */
-    --primary: #545873       /* Main header, primary buttons (was olive-green) */
-    --primary-dark: #252547  /* Header gradient end, deep accents (was deep-teal) */
-    --primary-light: #a597a6;     /* Badges, tags, soft accents (was sage-green) */
+    --primary: #878cb4;           /* Main header, primary buttons (was olive-green) */
+    --primary-dark: #34547c;      /* Header gradient end, deep accents (was deep-teal) */
+    --primary-light: #757ea4;     /* Badges, tags, soft accents (was sage-green) */
     
     /* Secondary Colors - Accent and emphasis */
-    --secondary: #462f41;         /* Headings, strong emphasis (was terracotta) */
-    --secondary-light: #694f6a;   /* CTA buttons, hover states (was burnt-orange) */
+    --secondary: #36334e;         /* Headings, strong emphasis (was terracotta) */
+    --secondary-light: #465078;   /* CTA buttons, hover states (was burnt-orange) */
     
     /* Text Colors */
-    --text-primary: #252547;      /* Main body text (was chocolate-brown) */
-    --text-muted: #a597a6;        /* Muted text, subtle elements (was rosewood) */
+    --text-primary: #041424;      /* Main body text (was chocolate-brown) */
+    --text-muted: #8B4F54;        /* Muted text, subtle elements (was rosewood) */
     
     /* Background Colors */
     --bg-page: #f5f3f0;           /* Page background */
     --bg-card: #ffffff;           /* Card/content background */
     --bg-input: #fafaf8;          /* Input field background */
-    --bg-footer: #323b5d;         /* Footer background (same as text-primary) */
+    --bg-footer: #34547c;         /* Footer background (same as text-primary) */
+    
+    /* Gradient backgrounds with transparency */
+    --gradient-light: rgba(52, 84, 124, 0.2);   /* Based on primary-light */
+    --gradient-dark: rgba(52, 84, 124, 0.2);     /* Based on primary-dark */
     
     /* Utility Colors - Not currently used but available */
     --accent-yellow: #D4A017;     /* Available for highlights (was mustard-yellow) */
@@ -178,11 +182,16 @@ footer {
     margin-top: 3rem;
 }
 
+.page-footer {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
 /* Home Page Styles */
 .hero {
     text-align: center;
     padding: 4rem 1rem;
-    background: linear-gradient(135deg, rgba(122, 155, 142, 0.2) 0%, rgba(43, 91, 107, 0.15) 100%);
+    background: linear-gradient(135deg, var(--gradient-light) 0%, var(--gradient-dark) 100%);
     border-radius: 12px;
     margin: 2rem 0;
 }
@@ -421,7 +430,7 @@ footer {
     display: flex;
     gap: 2rem;
     padding: 2rem;
-    background: linear-gradient(135deg, rgba(122, 155, 142, 0.2) 0%, rgba(43, 91, 107, 0.15) 100%);
+    background: linear-gradient(135deg, var(--gradient-light) 0%, var(--gradient-dark) 100%);
 }
 
 .profile-image {
