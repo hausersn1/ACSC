@@ -7,23 +7,23 @@
 
 :root {
     /* Primary Colors - Main brand colors */
-    --primary: #4A5D3F;           /* Main header, primary buttons (was olive-green) */
-    --primary-dark: #2B5B6B;      /* Header gradient end, deep accents (was deep-teal) */
-    --primary-light: #7A9B8E;     /* Badges, tags, soft accents (was sage-green) */
+    --primary: #545873       /* Main header, primary buttons (was olive-green) */
+    --primary-dark: #252547  /* Header gradient end, deep accents (was deep-teal) */
+    --primary-light: #a597a6;     /* Badges, tags, soft accents (was sage-green) */
     
     /* Secondary Colors - Accent and emphasis */
-    --secondary: #8B4513;         /* Headings, strong emphasis (was terracotta) */
-    --secondary-light: #C2622A;   /* CTA buttons, hover states (was burnt-orange) */
+    --secondary: #cfb6af;         /* Headings, strong emphasis (was terracotta) */
+    --secondary-light: #f4ede7;   /* CTA buttons, hover states (was burnt-orange) */
     
     /* Text Colors */
-    --text-primary: #5D4037;      /* Main body text (was chocolate-brown) */
-    --text-muted: #8B4F54;        /* Muted text, subtle elements (was rosewood) */
+    --text-primary: #252547;      /* Main body text (was chocolate-brown) */
+    --text-muted: #a597a6;        /* Muted text, subtle elements (was rosewood) */
     
     /* Background Colors */
     --bg-page: #f5f3f0;           /* Page background */
     --bg-card: #ffffff;           /* Card/content background */
     --bg-input: #fafaf8;          /* Input field background */
-    --bg-footer: #5D4037;         /* Footer background (same as text-primary) */
+    --bg-footer: #323b5d;         /* Footer background (same as text-primary) */
     
     /* Utility Colors - Not currently used but available */
     --accent-yellow: #D4A017;     /* Available for highlights (was mustard-yellow) */
