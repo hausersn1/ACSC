@@ -6,27 +6,40 @@
 }
 
 :root {
-    --olive-green: #4A5D3F;
-    --deep-teal: #2B5B6B;
-    --terracotta: #8B4513;
-    --burnt-orange: #C2622A;
-    --chocolate-brown: #5D4037;
-    --sage-green: #7A9B8E;
-    --mustard-yellow: #D4A017;
-    --aubergine: #4A2545;
-    --rosewood: #8B4F54;
+    /* Primary Colors - Main brand colors */
+    --primary: #4A5D3F;           /* Main header, primary buttons (was olive-green) */
+    --primary-dark: #2B5B6B;      /* Header gradient end, deep accents (was deep-teal) */
+    --primary-light: #7A9B8E;     /* Badges, tags, soft accents (was sage-green) */
+    
+    /* Secondary Colors - Accent and emphasis */
+    --secondary: #8B4513;         /* Headings, strong emphasis (was terracotta) */
+    --secondary-light: #C2622A;   /* CTA buttons, hover states (was burnt-orange) */
+    
+    /* Text Colors */
+    --text-primary: #5D4037;      /* Main body text (was chocolate-brown) */
+    --text-muted: #8B4F54;        /* Muted text, subtle elements (was rosewood) */
+    
+    /* Background Colors */
+    --bg-page: #f5f3f0;           /* Page background */
+    --bg-card: #ffffff;           /* Card/content background */
+    --bg-input: #fafaf8;          /* Input field background */
+    --bg-footer: #5D4037;         /* Footer background (same as text-primary) */
+    
+    /* Utility Colors - Not currently used but available */
+    --accent-yellow: #D4A017;     /* Available for highlights (was mustard-yellow) */
+    --accent-purple: #4A2545;     /* Available for special elements (was aubergine) */
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
-    color: var(--chocolate-brown);
-    background: #f5f3f0;
+    color: var(--text-primary);
+    background: var(--bg-page);
 }
 
 /* Header Styles */
 header {
-    background: linear-gradient(135deg, var(--olive-green) 0%, var(--deep-teal) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     padding: 1rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.15);
@@ -95,13 +108,13 @@ nav a:hover, nav a.active {
 
 .page-header h2 {
     font-size: 2.5rem;
-    color: var(--terracotta);
+    color: var(--secondary);
     margin-bottom: 0.5rem;
 }
 
 .page-header p {
     font-size: 1.1rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
 }
 
 /* Buttons */
@@ -116,49 +129,49 @@ nav a:hover, nav a.active {
 }
 
 .btn-primary {
-    background: var(--burnt-orange);
+    background: var(--secondary-light);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(194, 98, 42, 0.4);
-    background: var(--terracotta);
+    background: var(--secondary);
 }
 
 .btn-secondary {
     background: white;
-    color: var(--terracotta);
-    border: 2px solid var(--terracotta);
+    color: var(--secondary);
+    border: 2px solid var(--secondary);
 }
 
 .btn-secondary:hover {
-    background: var(--terracotta);
+    background: var(--secondary);
     color: white;
 }
 
 .back-button {
     display: inline-block;
     background: white;
-    color: var(--terracotta);
+    color: var(--secondary);
     padding: 0.5rem 1rem;
     border-radius: 6px;
     text-decoration: none;
     margin-bottom: 1rem;
     font-weight: 600;
     transition: transform 0.2s;
-    border: 2px solid var(--terracotta);
+    border: 2px solid var(--secondary);
 }
 
 .back-button:hover {
     transform: translateX(-4px);
-    background: var(--terracotta);
+    background: var(--secondary);
     color: white;
 }
 
 /* Footer */
 footer {
-    background: var(--chocolate-brown);
+    background: var(--bg-footer);
     color: #e8dfd6;
     text-align: center;
     padding: 2rem 1rem;
@@ -176,13 +189,13 @@ footer {
 
 .hero h1 {
     font-size: 3rem;
-    color: var(--terracotta);
+    color: var(--secondary);
     margin-bottom: 1rem;
 }
 
 .hero p {
     font-size: 1.3rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     max-width: 800px;
     margin: 0 auto 2rem;
 }
@@ -202,11 +215,11 @@ footer {
 }
 
 .feature-card {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border-top: 4px solid var(--olive-green);
+    border-top: 4px solid var(--primary);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -216,18 +229,18 @@ footer {
 }
 
 .feature-card h3 {
-    color: var(--terracotta);
+    color: var(--secondary);
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
 .feature-card p {
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
 }
 
 /* Directory Page Styles */
 .controls {
-    background: white;
+    background: var(--bg-card);
     padding: 1.5rem;
     margin: 2rem auto;
     border-radius: 8px;
@@ -238,7 +251,7 @@ footer {
     width: 100%;
     padding: 0.75rem 1rem;
     font-size: 1rem;
-    border: 2px solid var(--sage-green);
+    border: 2px solid var(--primary-light);
     border-radius: 6px;
     margin-bottom: 1rem;
     transition: border-color 0.3s;
@@ -246,7 +259,7 @@ footer {
 
 .search-bar:focus {
     outline: none;
-    border-color: var(--olive-green);
+    border-color: var(--primary);
 }
 
 .filters {
@@ -265,23 +278,23 @@ footer {
     display: block;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
 }
 
 .filter-group select {
     width: 100%;
     padding: 0.5rem;
-    border: 2px solid var(--sage-green);
+    border: 2px solid var(--primary-light);
     border-radius: 6px;
     font-size: 0.95rem;
     cursor: pointer;
-    background: white;
-    color: var(--chocolate-brown);
+    background: var(--bg-card);
+    color: var(--text-primary);
 }
 
 .filter-group select:focus {
     outline: none;
-    border-color: var(--olive-green);
+    border-color: var(--primary);
 }
 
 .checkbox-container {
@@ -292,9 +305,9 @@ footer {
     max-height: 200px;
     overflow-y: auto;
     padding: 0.5rem;
-    border: 1px solid var(--sage-green);
+    border: 1px solid var(--primary-light);
     border-radius: 6px;
-    background: #fafaf8;
+    background: var(--bg-input);
 }
 
 .checkbox-label {
@@ -304,7 +317,7 @@ footer {
     padding: 0.3rem;
     border-radius: 4px;
     transition: background 0.2s;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
 }
 
 .checkbox-label:hover {
@@ -316,13 +329,13 @@ footer {
     cursor: pointer;
     width: 16px;
     height: 16px;
-    accent-color: var(--olive-green);
+    accent-color: var(--primary);
 }
 
 .results-info {
     text-align: center;
     margin: 1rem 0;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     font-size: 0.95rem;
 }
 
@@ -334,7 +347,7 @@ footer {
 }
 
 .person-card {
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -351,7 +364,7 @@ footer {
     width: 100%;
     height: 280px;
     object-fit: cover;
-    background: linear-gradient(135deg, var(--rosewood) 0%, var(--terracotta) 100%);
+    background: linear-gradient(135deg, var(--text-muted) 0%, var(--secondary) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -368,24 +381,24 @@ footer {
 .card-name {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--terracotta);
+    color: var(--secondary);
     margin-bottom: 0.5rem;
 }
 
 .card-position {
     font-size: 1rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .card-institution {
     font-size: 0.9rem;
-    color: var(--sage-green);
+    color: var(--primary-light);
 }
 
 .mentor-badge {
     display: inline-block;
-    background: var(--sage-green);
+    background: var(--primary-light);
     color: white;
     padding: 0.3rem 0.7rem;
     border-radius: 20px;
@@ -398,7 +411,7 @@ footer {
     display: none;
     max-width: 900px;
     margin: 2rem auto;
-    background: white;
+    background: var(--bg-card);
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     overflow: hidden;
@@ -416,7 +429,7 @@ footer {
     height: 200px;
     border-radius: 12px;
     object-fit: cover;
-    background: linear-gradient(135deg, var(--rosewood) 0%, var(--terracotta) 100%);
+    background: linear-gradient(135deg, var(--text-muted) 0%, var(--secondary) 100%);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -434,25 +447,25 @@ footer {
 .profile-name {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--terracotta);
+    color: var(--secondary);
     margin-bottom: 0.5rem;
 }
 
 .profile-position {
     font-size: 1.2rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .profile-institution {
     font-size: 1rem;
-    color: var(--sage-green);
+    color: var(--primary-light);
     margin-bottom: 1rem;
 }
 
 .profile-email {
     display: inline-block;
-    background: var(--burnt-orange);
+    background: var(--secondary-light);
     color: white;
     padding: 0.6rem 1.2rem;
     border-radius: 6px;
@@ -462,7 +475,7 @@ footer {
 }
 
 .profile-email:hover {
-    background: var(--terracotta);
+    background: var(--secondary);
 }
 
 .profile-details {
@@ -475,7 +488,7 @@ footer {
     gap: 0.75rem;
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 2px solid var(--sage-green);
+    border-top: 2px solid var(--primary-light);
 }
 
 .profile-link-btn {
@@ -484,8 +497,8 @@ footer {
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
     background: white;
-    color: var(--chocolate-brown);
-    border: 2px solid var(--sage-green);
+    color: var(--text-primary);
+    border: 2px solid var(--primary-light);
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
@@ -494,7 +507,7 @@ footer {
 }
 
 .profile-link-btn:hover {
-    background: var(--sage-green);
+    background: var(--primary-light);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -506,13 +519,13 @@ footer {
 
 .detail-label {
     font-weight: 700;
-    color: var(--terracotta);
+    color: var(--secondary);
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
 }
 
 .detail-value {
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     line-height: 1.8;
 }
 
@@ -524,7 +537,7 @@ footer {
 }
 
 .tag {
-    background: var(--sage-green);
+    background: var(--primary-light);
     color: white;
     padding: 0.4rem 0.8rem;
     border-radius: 20px;
@@ -535,7 +548,7 @@ footer {
 .no-results, .loading {
     text-align: center;
     padding: 3rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     font-size: 1.1rem;
 }
 
@@ -547,11 +560,11 @@ footer {
 }
 
 .event-card {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border-left: 6px solid var(--burnt-orange);
+    border-left: 6px solid var(--secondary-light);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -561,7 +574,7 @@ footer {
 }
 
 .event-card h3 {
-    color: var(--terracotta);
+    color: var(--secondary);
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
@@ -570,7 +583,7 @@ footer {
     display: flex;
     gap: 2rem;
     margin-bottom: 1rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     flex-wrap: wrap;
 }
 
@@ -581,7 +594,7 @@ footer {
 }
 
 .event-description {
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     margin-bottom: 1rem;
     line-height: 1.8;
 }
@@ -594,7 +607,7 @@ footer {
 
 .event-link {
     padding: 0.5rem 1rem;
-    background: var(--sage-green);
+    background: var(--primary-light);
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -603,7 +616,7 @@ footer {
 }
 
 .event-link:hover {
-    background: var(--deep-teal);
+    background: var(--primary-dark);
 }
 
 /* Resources Page Styles */
@@ -613,7 +626,7 @@ footer {
 }
 
 .resource-section {
-    background: white;
+    background: var(--bg-card);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -621,28 +634,28 @@ footer {
 }
 
 .resource-section h3 {
-    color: var(--terracotta);
+    color: var(--secondary);
     font-size: 1.8rem;
     margin-bottom: 1rem;
-    border-bottom: 3px solid var(--burnt-orange);
+    border-bottom: 3px solid var(--secondary-light);
     padding-bottom: 0.5rem;
 }
 
 .resource-section h4 {
-    color: var(--olive-green);
+    color: var(--primary);
     font-size: 1.3rem;
     margin: 1.5rem 0 0.5rem;
 }
 
 .resource-section p {
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     line-height: 1.8;
     margin-bottom: 1rem;
 }
 
 .resource-section ul {
     margin-left: 2rem;
-    color: var(--chocolate-brown);
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -652,7 +665,7 @@ footer {
 }
 
 .resource-section strong {
-    color: var(--terracotta);
+    color: var(--secondary);
 }
 
 /* Mobile Responsive */
@@ -663,7 +676,7 @@ footer {
         top: 100%;
         left: 0;
         right: 0;
-        background: linear-gradient(135deg, var(--olive-green) 0%, var(--deep-teal) 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         flex-direction: column;
         gap: 0;
         padding: 1rem;
