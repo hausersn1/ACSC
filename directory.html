@@ -455,17 +455,19 @@
 
         function formatDegreeEntry(degreeName, info, showSuperscript = false, superscriptSymbol = '') {
             if (!info) return '';
-            
             let degreeText = degreeName;
             if (showSuperscript && superscriptSymbol) {
                 degreeText += `<sup>${superscriptSymbol}</sup>`;
             }
-            
-            if (info.field) {
-                return `<li><strong>${degreeText}</strong>, ${info.field}, ${info.institution}, ${info.year}</li>`;
-            } else {
-                return `<li><strong>${degreeText}</strong>, ${info.institution}, ${info.year}</li>`;
-            }
+
+            // Build a list of available parts (field, institution, year)
+            const parts = [];
+            if (info.field) parts.push(info.field);
+            if (info.institution) parts.push(info.institution);
+            if (info.year) parts.push(info.year);
+
+            const suffix = parts.length > 0 ? `, ${parts.join(', ')}` : '';
+            return `<li><strong>${degreeText}</strong>${suffix}</li>`;
         }
 
         function showProfile(personIndex) {
