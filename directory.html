@@ -63,10 +63,10 @@
         let filteredPeople = [];
         
         const multiSelectFields = [
-            'Current Professional Activities (check all that apply)',
+            'Current Professional Activities',
             'Research Topic Area(s)',
-            'Research Category (check all that apply)',
-            'What funding mechanisms do you have experience with? (check all that apply)',
+            'Research Category',
+            'What funding mechanisms do you have experience with?',
             'What level mentee do you typically work with?',
             'What professional topics would you be interested in providing mentoring on?'
         ];
@@ -111,10 +111,10 @@
 
         const checkboxFilterFields = [
             'Research Topic Area(s)',
-            'Research Category (check all that apply)',
+            'Research Category',
             'What professional topics would you be interested in providing mentoring on?',
             'What level mentee do you typically work with?',
-            'Current Professional Activities (check all that apply)'
+            'Current Professional Activities'
         ];
 
         function toggleMobileMenu() {
@@ -169,19 +169,19 @@
             
             // Define filter organization by row
             const filterRows = {
-                'row-2': ['Research Category (check all that apply)', 'Research Topic Area(s)'],
+                'row-2': ['Research Category', 'Research Topic Area(s)'],
                 'row-3': ['What professional topics would you be interested in providing mentoring on?', 'What level mentee do you typically work with?', 'Do you agree to mentor individuals who reach out to you?'],
-                'row-4': ['Current Professional Activities (check all that apply)', 'Did you complete your AuD and PhD simultaneously or sequentially?']
+                'row-4': ['Current Professional Activities', 'Did you complete your AuD and PhD simultaneously or sequentially?']
             };
             
             const shortLabels = {
-                'Research Category (check all that apply)': 'Research Category',
+                'Research Category': 'Research Category',
                 'Research Topic Area(s)': 'Research Topics',
                 'Do you agree to mentor individuals who reach out to you?': 'Available to Mentor',
                 'What professional topics would you be interested in providing mentoring on?': 'Mentoring Topics',
                 'What level mentee do you typically work with?': 'Mentee Level',
                 'Did you complete your AuD and PhD simultaneously or sequentially?': 'Degree Timing',
-                'Current Professional Activities (check all that apply)': 'Professional Activities'
+                'Current Professional Activities': 'Professional Activities'
             };
             
             // Create rows
@@ -300,11 +300,11 @@
                 
                 // Check all other filters
                 const allFilters = [
-                    'Research Category (check all that apply)',
+                    'Research Category',
                     'Research Topic Area(s)',
                     'What professional topics would you be interested in providing mentoring on?',
                     'What level mentee do you typically work with?',
-                    'Current Professional Activities (check all that apply)',
+                    'Current Professional Activities',
                     'Did you complete your AuD and PhD simultaneously or sequentially?'
                 ];
                 
