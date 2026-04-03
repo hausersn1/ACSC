@@ -470,6 +470,18 @@
             return `<li><strong>${degreeText}</strong>${suffix}</li>`;
         }
 
+        function normalizeLinkUrl(url) {
+            if (!url) return '';
+            const trimmed = url.toString().trim();
+            if (!trimmed) return '';
+            // Preserve already absolute protocols and special schemes (mailto:, tel:, hash, or root-relative)
+            if (/^(https?:\/\/|mailto:|tel:|#|\/)/i.test(trimmed)) {
+                return trimmed;
+            }
+            // Add https:// by default for plain host names / paths
+            return `https://${trimmed}`;
+        }
+
         function showProfile(personIndex) {
             const person = allPeople[personIndex];
             const fileName = person['FileName'] && person['FileName'] !== 'NA' ? person['FileName'].trim() : '';
@@ -565,7 +577,9 @@
                         'link': '🔗'
                     };
                     const icon = iconMap[link.icon] || '🔗';
-                    linksSection += `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="profile-link-btn">${icon} ${link.label}</a>`;
+                    const safeUrl = normalizeLinkUrl(link.url);
+                    if (!safeUrl) return; // skip broken/empty
+                    linksSection += `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="profile-link-btn">${icon} ${link.label}</a>`;
                 });
                 linksSection += '</div>';
             }
